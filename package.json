@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "bun --hot src/index.tsx",
     "start": "NODE_ENV=production bun src/index.tsx",
-    "build": "bun run build.ts"
+    "build": "bun run build.ts --outdir=dist --minify --source-map=linked",
+    "deploy": "bun run build && touch dist/.nojekyll"
   },
   "dependencies": {
     "@catppuccin/palette": "^1.7.1",
