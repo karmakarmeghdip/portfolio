@@ -76,7 +76,7 @@ export function HackathonsPage() {
                   {hackathon.achievement && (
                     <div>
                       <span className="font-medium">Achievement: </span>
-                      <Badge variant="success" className="bg-green-500 hover:bg-green-600">
+                      <Badge className="bg-green-500 hover:bg-green-600">
                         {hackathon.achievement}
                       </Badge>
                     </div>

@@ -100,7 +100,7 @@
   --sidebar-primary: var(--ctp-mocha-blue);
   --sidebar-primary-foreground: var(--ctp-mocha-crust);
   --sidebar-accent: var(--ctp-mocha-lavender);
-  --sidebar-accent-foreground: var (--ctp-mocha-crust);
+  --sidebar-accent-foreground: var(--ctp-mocha-crust);
   --sidebar-border: var(--ctp-mocha-surface0);
   --sidebar-ring: var(--ctp-mocha-lavender);
   --sidebar: hsl(240 5.9% 10%);
