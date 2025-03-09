@@ -34,7 +34,7 @@ export function MainLayout({ children, activePage, setActivePage }: MainLayoutPr
           <Sidebar>
             <SidebarHeader>
               <div className="flex items-center gap-2 px-2">
-                <h1 className="text-xl font-bold">Portfolio</h1>
+                <h1 className="text-xl font-bold">Meghdip Karmakar</h1>
               </div>
             </SidebarHeader>
 
@@ -145,7 +145,7 @@ export function MainLayout({ children, activePage, setActivePage }: MainLayoutPr
           <div className="flex-1 overflow-auto w-full">
             <header className="flex justify-between items-center py-4 px-4 md:px-6 w-full border-b">
               <div className="flex items-center gap-2">
-                <SidebarTrigger className="flex md:flex" />
+                <SidebarTrigger className="flex" />
               </div>
               <ThemeToggle />
             </header>
