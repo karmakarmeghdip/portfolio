@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "dev": "deno run --watch --env-file main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "hono": "npm:hono",
+    "spotify-web-api-node": "npm:spotify-web-api-node"
+  }
+}
