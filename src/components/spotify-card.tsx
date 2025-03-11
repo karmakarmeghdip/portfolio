@@ -1,10 +1,8 @@
-import type { Api } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { hc } from "hono/client";
 import { useEffect, useState } from "react";
 
-const client = hc<Api>(false ? '/' : 'https://karmakarmeghdip-portfolio-8np9an8j85ac.deno.dev/');
+const BASE_URL = false ? '/' : 'https://karmakarmeghdip-portfolio-8np9an8j85ac.deno.dev/';
 
 export const SpotifyCard = () => {
   const [track, setTrack] = useState<{
@@ -16,14 +14,14 @@ export const SpotifyCard = () => {
     songUrl: string;
     progress: number;
     duration: number;
-  }>(null);
+  } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNowPlaying = async () => {
       try {
-        const response = await client.api.spotify["now-playing"].$get();
+        const response = await fetch(BASE_URL + 'api/spotify/now-playing');
         const data = await response.json();
 
         setTrack(data as {

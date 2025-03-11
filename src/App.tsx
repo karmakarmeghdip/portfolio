@@ -7,7 +7,7 @@ import { ProjectsPage } from "@/components/pages/ProjectsPage";
 import { HackathonsPage } from "@/components/pages/HackathonsPage";
 import { ContactPage } from "@/components/pages/ContactPage";
 import { useAuth } from "@/contexts/AuthContext";
-import "../styles/globals.css";
+import "./index.css";
 
 function AppContent() {
   const [activePage, setActivePage] = useState("home");

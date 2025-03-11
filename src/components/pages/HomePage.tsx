@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GithubCalendar from 'react-github-calendar';
-// @ts-expect-error
-import Profile from "../../profile.jpg";
+import profile from "../../assets/profile.jpg";
 import { SpotifyCard } from "../spotify-card";
 
 export function HomePage() {
@@ -13,7 +12,7 @@ export function HomePage() {
       {/* Hero Section with Avatar */}
       <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
         <Avatar className="w-32 h-32 border-4 border-primary">
-          <AvatarImage src={Profile} alt="Profile picture" />
+          <AvatarImage src={profile} alt="Profile picture" />
           <AvatarFallback>MK</AvatarFallback>
         </Avatar>
 
