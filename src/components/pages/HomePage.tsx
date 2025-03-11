@@ -2,8 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import GithubCalendar from 'react-github-calendar';
 // @ts-expect-error
 import Profile from "../../profile.jpg";
+import { SpotifyCard } from "../spotify-card";
 
 export function HomePage() {
   return (
@@ -102,7 +104,7 @@ export function HomePage() {
             <CardDescription>My recent activity</CardDescription>
           </CardHeader>
           <CardContent className="h-40 flex items-center justify-center bg-muted/20">
-            <p className="text-muted-foreground">GitHub Profile Card Placeholder</p>
+            <GithubCalendar username="karmakarmeghdip" />
           </CardContent>
           <CardFooter>
             <Button variant="outline" size="sm" asChild>
@@ -114,18 +116,7 @@ export function HomePage() {
         </Card>
 
         {/* Spotify Now Playing Card Placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Spotify</CardTitle>
-            <CardDescription>Now playing</CardDescription>
-          </CardHeader>
-          <CardContent className="h-40 flex items-center justify-center bg-muted/20">
-            <p className="text-muted-foreground">Spotify Now Playing Placeholder</p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline" size="sm">Connect Spotify</Button>
-          </CardFooter>
-        </Card>
+        <SpotifyCard />
       </div>
     </div>
   );

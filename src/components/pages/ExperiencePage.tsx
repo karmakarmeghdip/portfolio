@@ -33,7 +33,7 @@ export function ExperiencePage() {
                 <h3 className="font-bold text-lg">Aarish Remote</h3>
                 <p className="text-muted-foreground">BACKEND DEVELOPER/MLOPS INTERN</p>
               </div>
-              <p className="text-sm text-muted-foreground">January 2024 – February 2024</p>
+              <p className="text-sm text-muted-foreground">January 2024 – February 2025</p>
             </div>
             <ul className="list-disc pl-5 space-y-1">
               <li>Deploying ML Models on to the Cloud</li>
