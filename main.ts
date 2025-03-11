@@ -8,8 +8,7 @@ const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET')
 const SPOTIFY_REDIRECT_URI = Deno.env.get('SPOTIFY_REDIRECT_URI')
 
 if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET || !SPOTIFY_REDIRECT_URI) {
-  console.error('Missing required environment variables')
-  Deno.exit(1)
+  throw new Error('Missing required environment variables')
 }
 
 const spotifyApi = new SpotifyWebApi({
