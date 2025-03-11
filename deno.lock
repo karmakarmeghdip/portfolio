@@ -3,8 +3,10 @@
   "specifiers": {
     "jsr:@std/assert@1": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
+    "npm:@catppuccin/palette@*": "1.7.1",
     "npm:@catppuccin/palette@^1.7.1": "1.7.1",
     "npm:@eslint/js@^9.21.0": "9.22.0",
+    "npm:@eslint/js@^9.22.0": "9.22.0",
     "npm:@hookform/resolvers@^4.1.3": "4.1.3_react-hook-form@7.54.2__react@19.0.0_react@19.0.0",
     "npm:@radix-ui/react-avatar@^1.1.3": "1.1.3_@types+react@19.0.10_@types+react-dom@19.0.4__@types+react@19.0.10_react@19.0.0_react-dom@19.0.0__react@19.0.0",
     "npm:@radix-ui/react-dialog@^1.1.6": "1.1.6_@types+react@19.0.10_@types+react-dom@19.0.4__@types+react@19.0.10_react@19.0.0_react-dom@19.0.0__react@19.0.0",
@@ -19,12 +21,16 @@
     "npm:@types/node@^22.13.10": "22.13.10",
     "npm:@types/react-dom@^19.0.4": "19.0.4_@types+react@19.0.10",
     "npm:@types/react@^19.0.10": "19.0.10",
-    "npm:@vitejs/plugin-react@^4.3.4": "4.3.4_vite@6.2.1__@types+node@22.13.10__lightningcss@1.29.2_@babel+core@7.26.10_@types+node@22.13.10",
+    "npm:@vitejs/plugin-react@*": "4.3.4_vite@6.2.1__@types+node@22.13.10__lightningcss@1.29.2_@babel+core@7.26.10_@types+node@22.12.0",
+    "npm:@vitejs/plugin-react@^4.3.4": "4.3.4_vite@6.2.1__@types+node@22.13.10__lightningcss@1.29.2_@babel+core@7.26.10_@types+node@22.12.0",
     "npm:class-variance-authority@~0.7.1": "0.7.1",
     "npm:clsx@^2.1.1": "2.1.1",
     "npm:eslint-plugin-react-hooks@^5.1.0": "5.2.0_eslint@9.22.0",
+    "npm:eslint-plugin-react-hooks@^5.2.0": "5.2.0_eslint@9.22.0",
     "npm:eslint-plugin-react-refresh@~0.4.19": "0.4.19_eslint@9.22.0",
     "npm:eslint@^9.21.0": "9.22.0",
+    "npm:eslint@^9.22.0": "9.22.0",
+    "npm:globals@16": "16.0.0",
     "npm:globals@^15.15.0": "15.15.0",
     "npm:hono@*": "4.7.4",
     "npm:hono@^4.7.4": "4.7.4",
@@ -39,8 +45,12 @@
     "npm:tailwindcss-animate@^1.0.7": "1.0.7_tailwindcss@4.0.13",
     "npm:tailwindcss@^4.0.13": "4.0.13",
     "npm:typescript-eslint@^8.24.1": "8.26.1_eslint@9.22.0_typescript@5.7.3_@typescript-eslint+parser@8.26.1__eslint@9.22.0__typescript@5.7.3",
+    "npm:typescript-eslint@^8.26.1": "8.26.1_eslint@9.22.0_typescript@5.7.3_@typescript-eslint+parser@8.26.1__eslint@9.22.0__typescript@5.7.3",
+    "npm:typescript@5.7.3": "5.7.3",
+    "npm:typescript@^5.8.2": "5.8.2",
     "npm:typescript@~5.7.2": "5.7.3",
-    "npm:vite@^6.2.0": "6.2.1_@types+node@22.13.10_lightningcss@1.29.2",
+    "npm:vite@^6.2.0": "6.2.1_@types+node@22.12.0",
+    "npm:vite@^6.2.1": "6.2.1_@types+node@22.12.0",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
@@ -1008,7 +1018,7 @@
         "ignore",
         "natural-compare",
         "ts-api-utils",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "@typescript-eslint/parser@8.26.1_eslint@9.22.0_typescript@5.7.3": {
@@ -1020,7 +1030,7 @@
         "@typescript-eslint/visitor-keys",
         "debug",
         "eslint",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "@typescript-eslint/scope-manager@8.26.1": {
@@ -1038,7 +1048,7 @@
         "debug",
         "eslint",
         "ts-api-utils",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "@typescript-eslint/types@8.26.1": {
@@ -1055,7 +1065,7 @@
         "minimatch@9.0.5",
         "semver@7.7.1",
         "ts-api-utils",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "@typescript-eslint/utils@8.26.1_eslint@9.22.0_typescript@5.7.3": {
@@ -1066,7 +1076,7 @@
         "@typescript-eslint/types",
         "@typescript-eslint/typescript-estree",
         "eslint",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "@typescript-eslint/visitor-keys@8.26.1": {
@@ -1074,6 +1084,17 @@
       "dependencies": [
         "@typescript-eslint/types",
         "eslint-visitor-keys@4.2.0"
+      ]
+    },
+    "@vitejs/plugin-react@4.3.4_vite@6.2.1__@types+node@22.13.10__lightningcss@1.29.2_@babel+core@7.26.10_@types+node@22.12.0": {
+      "integrity": "sha512-SCCPBJtYLdE8PX/7ZQAs1QAZ8Jqwih+0VBLum1EGqmCCQal+MIUqLCzj3ZUy8ufbC0cAM4LRlSTm7IQJwWT4ug==",
+      "dependencies": [
+        "@babel/core",
+        "@babel/plugin-transform-react-jsx-self",
+        "@babel/plugin-transform-react-jsx-source",
+        "@types/babel__core",
+        "react-refresh",
+        "vite@6.2.1_@types+node@22.13.10_lightningcss@1.29.2_@types+node@22.12.0"
       ]
     },
     "@vitejs/plugin-react@4.3.4_vite@6.2.1__@types+node@22.13.10__lightningcss@1.29.2_@babel+core@7.26.10_@types+node@22.13.10": {
@@ -1538,6 +1559,9 @@
     },
     "globals@15.15.0": {
       "integrity": "sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg=="
+    },
+    "globals@16.0.0": {
+      "integrity": "sha512-iInW14XItCXET01CQFqudPOWP2jYMl7T+QRQT+UNcR/iQncN/F0UNpgd76iFkBPgNQb4+X3LV9tLJYzwh+Gl3A=="
     },
     "gopd@1.2.0": {
       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
@@ -2067,7 +2091,7 @@
     "ts-api-utils@2.0.1_typescript@5.7.3": {
       "integrity": "sha512-dnlgjFSVetynI8nzgJ+qF62efpglpWRk8isUEWZGWlJYySCTD6aKvbUDu+zbPeDakk3bg5H4XpitHukgfL1m9w==",
       "dependencies": [
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "tslib@2.8.1": {
@@ -2086,11 +2110,14 @@
         "@typescript-eslint/parser",
         "@typescript-eslint/utils",
         "eslint",
-        "typescript"
+        "typescript@5.7.3"
       ]
     },
     "typescript@5.7.3": {
       "integrity": "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw=="
+    },
+    "typescript@5.8.2": {
+      "integrity": "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="
     },
     "undici-types@6.20.0": {
       "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
@@ -2129,6 +2156,16 @@
     "util-deprecate@1.0.2": {
       "integrity": "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="
     },
+    "vite@6.2.1_@types+node@22.12.0": {
+      "integrity": "sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==",
+      "dependencies": [
+        "@types/node@22.12.0",
+        "esbuild",
+        "fsevents",
+        "postcss",
+        "rollup"
+      ]
+    },
     "vite@6.2.1_@types+node@22.13.10": {
       "integrity": "sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==",
       "dependencies": [
@@ -2143,6 +2180,17 @@
       "integrity": "sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==",
       "dependencies": [
         "@types/node@22.13.10",
+        "esbuild",
+        "fsevents",
+        "lightningcss",
+        "postcss",
+        "rollup"
+      ]
+    },
+    "vite@6.2.1_@types+node@22.13.10_lightningcss@1.29.2_@types+node@22.12.0": {
+      "integrity": "sha512-n2GnqDb6XPhlt9B8olZPrgMD/es/Nd1RdChF6CBD/fHW6pUyUTt2sQW2fPRX5GiD9XEa6+8A6A4f2vT6pSsE7Q==",
+      "dependencies": [
+        "@types/node@22.12.0",
         "esbuild",
         "fsevents",
         "lightningcss",
@@ -2170,6 +2218,46 @@
     }
   },
   "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@catppuccin/palette@^1.7.1",
+        "npm:@eslint/js@^9.21.0",
+        "npm:@hookform/resolvers@^4.1.3",
+        "npm:@radix-ui/react-avatar@^1.1.3",
+        "npm:@radix-ui/react-dialog@^1.1.6",
+        "npm:@radix-ui/react-dropdown-menu@^2.1.6",
+        "npm:@radix-ui/react-label@^2.1.2",
+        "npm:@radix-ui/react-select@^2.1.6",
+        "npm:@radix-ui/react-separator@^1.1.2",
+        "npm:@radix-ui/react-slot@^1.1.2",
+        "npm:@radix-ui/react-tooltip@^1.1.8",
+        "npm:@tailwindcss/vite@^4.0.13",
+        "npm:@types/node@^22.13.10",
+        "npm:@types/react-dom@^19.0.4",
+        "npm:@types/react@^19.0.10",
+        "npm:@vitejs/plugin-react@^4.3.4",
+        "npm:class-variance-authority@~0.7.1",
+        "npm:clsx@^2.1.1",
+        "npm:eslint-plugin-react-hooks@^5.1.0",
+        "npm:eslint-plugin-react-refresh@~0.4.19",
+        "npm:eslint@^9.21.0",
+        "npm:globals@^15.15.0",
+        "npm:hono@^4.7.4",
+        "npm:lucide-react@0.479",
+        "npm:react-dom@19",
+        "npm:react-github-calendar@^4.5.6",
+        "npm:react-hook-form@^7.54.2",
+        "npm:react@19",
+        "npm:spotify-web-api-node@^5.0.2",
+        "npm:tailwind-merge@^3.0.2",
+        "npm:tailwindcss-animate@^1.0.7",
+        "npm:tailwindcss@^4.0.13",
+        "npm:typescript-eslint@^8.24.1",
+        "npm:typescript@~5.7.2",
+        "npm:vite@^6.2.0",
+        "npm:zod@^3.24.2"
+      ]
+    },
     "members": {
       "backend": {
         "dependencies": [
@@ -2179,46 +2267,44 @@
         ]
       },
       "frontend": {
-        "packageJson": {
-          "dependencies": [
-            "npm:@catppuccin/palette@^1.7.1",
-            "npm:@eslint/js@^9.21.0",
-            "npm:@hookform/resolvers@^4.1.3",
-            "npm:@radix-ui/react-avatar@^1.1.3",
-            "npm:@radix-ui/react-dialog@^1.1.6",
-            "npm:@radix-ui/react-dropdown-menu@^2.1.6",
-            "npm:@radix-ui/react-label@^2.1.2",
-            "npm:@radix-ui/react-select@^2.1.6",
-            "npm:@radix-ui/react-separator@^1.1.2",
-            "npm:@radix-ui/react-slot@^1.1.2",
-            "npm:@radix-ui/react-tooltip@^1.1.8",
-            "npm:@tailwindcss/vite@^4.0.13",
-            "npm:@types/node@^22.13.10",
-            "npm:@types/react-dom@^19.0.4",
-            "npm:@types/react@^19.0.10",
-            "npm:@vitejs/plugin-react@^4.3.4",
-            "npm:class-variance-authority@~0.7.1",
-            "npm:clsx@^2.1.1",
-            "npm:eslint-plugin-react-hooks@^5.1.0",
-            "npm:eslint-plugin-react-refresh@~0.4.19",
-            "npm:eslint@^9.21.0",
-            "npm:globals@^15.15.0",
-            "npm:hono@^4.7.4",
-            "npm:lucide-react@0.479",
-            "npm:react-dom@19",
-            "npm:react-github-calendar@^4.5.6",
-            "npm:react-hook-form@^7.54.2",
-            "npm:react@19",
-            "npm:spotify-web-api-node@^5.0.2",
-            "npm:tailwind-merge@^3.0.2",
-            "npm:tailwindcss-animate@^1.0.7",
-            "npm:tailwindcss@^4.0.13",
-            "npm:typescript-eslint@^8.24.1",
-            "npm:typescript@~5.7.2",
-            "npm:vite@^6.2.0",
-            "npm:zod@^3.24.2"
-          ]
-        }
+        "dependencies": [
+          "npm:@catppuccin/palette@*",
+          "npm:@eslint/js@^9.22.0",
+          "npm:@hookform/resolvers@^4.1.3",
+          "npm:@radix-ui/react-avatar@^1.1.3",
+          "npm:@radix-ui/react-dialog@^1.1.6",
+          "npm:@radix-ui/react-dropdown-menu@^2.1.6",
+          "npm:@radix-ui/react-label@^2.1.2",
+          "npm:@radix-ui/react-select@^2.1.6",
+          "npm:@radix-ui/react-separator@^1.1.2",
+          "npm:@radix-ui/react-slot@^1.1.2",
+          "npm:@radix-ui/react-tooltip@^1.1.8",
+          "npm:@tailwindcss/vite@^4.0.13",
+          "npm:@types/node@^22.13.10",
+          "npm:@types/react-dom@^19.0.4",
+          "npm:@types/react@^19.0.10",
+          "npm:@vitejs/plugin-react@^4.3.4",
+          "npm:class-variance-authority@~0.7.1",
+          "npm:clsx@^2.1.1",
+          "npm:eslint-plugin-react-hooks@^5.2.0",
+          "npm:eslint-plugin-react-refresh@~0.4.19",
+          "npm:eslint@^9.22.0",
+          "npm:globals@16",
+          "npm:hono@^4.7.4",
+          "npm:lucide-react@0.479",
+          "npm:react-dom@19",
+          "npm:react-github-calendar@^4.5.6",
+          "npm:react-hook-form@^7.54.2",
+          "npm:react@19",
+          "npm:spotify-web-api-node@^5.0.2",
+          "npm:tailwind-merge@^3.0.2",
+          "npm:tailwindcss-animate@^1.0.7",
+          "npm:tailwindcss@^4.0.13",
+          "npm:typescript-eslint@^8.26.1",
+          "npm:typescript@^5.8.2",
+          "npm:vite@^6.2.1",
+          "npm:zod@^3.24.2"
+        ]
       }
     }
   }

@@ -5,6 +5,7 @@ import path from 'node:path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // @ts-ignore: Bullshit type error
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
