@@ -5,6 +5,7 @@ node_modules
 # output
 out
 dist
+.vite
 *.tgz
 
 # code coverage

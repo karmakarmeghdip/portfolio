@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "dev": "deno run --watch --env-file main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "hono": "npm:hono",
+    "spotify-web-api-node": "npm:spotify-web-api-node"
+  },
+  "deploy": {
+    "project": "94ed872e-84fa-45d1-9849-f9d1222ce8a7",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "main.ts"
+  }
+}
