@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { hc } from "hono/client";
 import { useEffect, useState } from "react";
 
-const client = hc<Api>(process.env.DEVELOPMENT ? '/' : 'https://example.com');
+const client = hc<Api>(false ? '/' : 'https://karmakarmeghdip-portfolio-8np9an8j85ac.deno.dev/');
 
 export const SpotifyCard = () => {
   const [track, setTrack] = useState<{
