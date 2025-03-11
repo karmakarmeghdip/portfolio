@@ -1,5 +1,5 @@
-import { Hono } from 'hono'
-import { cache } from 'hono/cache';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import SpotifyWebApi from 'spotify-web-api-node';
 
@@ -37,7 +37,7 @@ async function refreshAccessToken() {
 
 refreshAccessToken()
 
-export const api = new Hono().use(logger()).get('/api/spotify/now-playing', async (c) => {
+export const api = new Hono().use(logger()).use(cors({ origin: ['https://meghdip.is-a.dev', 'http://localhost:3000'] })).get('/api/spotify/now-playing', async (c) => {
   const CACHE_DURATION = 15 * 1000; // 15 seconds in milliseconds
   const cacheKey = c.req.url;
   try {
