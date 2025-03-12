@@ -9,7 +9,11 @@ export const auth = betterAuth({
     provider: "sqlite",
     schema,
   }),
-  trustedOrigins: ["http://localhost:8000", "http://localhost:5173"],
+  trustedOrigins: [
+    "http://localhost:8000",
+    "http://localhost:5173",
+    "https://meghdip.is-a.dev",
+  ],
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
