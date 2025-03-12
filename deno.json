@@ -2,5 +2,9 @@
   "workspace": [
     "./backend",
     "./frontend"
-  ]
+  ],
+  "imports": {
+    "hono": "npm:hono@^4.7.4",
+    "better-auth": "npm:better-auth@^1.2.3"
+  }
 }

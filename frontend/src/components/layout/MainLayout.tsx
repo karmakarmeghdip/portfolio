@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ThemeProvider, ThemeToggle } from "@/components/theme-provider";
+import { ThemeProvider, ThemeToggle } from "@/components/theme-provider.tsx";
 import {
   Sidebar,
   SidebarContent,
@@ -13,10 +13,11 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger
-} from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/sidebar.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext.tsx";
+import { AuthComponent } from "@/components/auth.tsx";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -29,7 +30,7 @@ export function MainLayout({ children, activePage, setActivePage }: MainLayoutPr
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="portfolio-theme">
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen>
         <div className="min-h-screen flex transition-colors bg-background w-full">
           <Sidebar>
             <SidebarHeader>
@@ -112,33 +113,7 @@ export function MainLayout({ children, activePage, setActivePage }: MainLayoutPr
             </SidebarContent>
 
             <SidebarFooter>
-              {!isAuthenticated ? (
-                <Button
-                  variant="outline"
-                  className="flex w-full gap-2 justify-center"
-                  onClick={login}
-                >
-                  <LogInIcon size={16} />
-                  <span>Login</span>
-                </Button>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2 px-2">
-                    <div className="bg-primary rounded-full p-1">
-                      <UserIcon size={16} className="text-primary-foreground" />
-                    </div>
-                    <span className="text-sm font-medium">User</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={logout}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              )}
+              <AuthComponent />
             </SidebarFooter>
           </Sidebar>
 

@@ -1,8 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button.tsx";
+import { hc } from "hono/client"
+import { Api } from "@portfolio/backend";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card.tsx";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "@/lib/constants.ts";
 
-const BASE_URL = false ? '/' : 'https://karmakarmeghdip-portfolio-8np9an8j85ac.deno.dev/';
+const client = hc<Api>(BASE_URL);
 
 export const SpotifyCard = () => {
   const [track, setTrack] = useState<{
@@ -21,7 +24,7 @@ export const SpotifyCard = () => {
   useEffect(() => {
     const fetchNowPlaying = async () => {
       try {
-        const response = await fetch(BASE_URL + 'api/spotify/now-playing');
+        const response = await client.api.spotify["now-playing"].$get();
         const data = await response.json();
 
         setTrack(data as {
@@ -36,7 +39,7 @@ export const SpotifyCard = () => {
         });
         setLoading(false);
       } catch (err) {
-        setError('Failed to fetch currently playing track');
+        setError('Failed to fetch currently playing track<br>' + err);
         setLoading(false);
       }
     };

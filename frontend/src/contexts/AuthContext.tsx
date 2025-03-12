@@ -1,6 +1,11 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
+import authClient from "@/lib/authClient.ts";
 
 interface AuthContextType {
+  data: any;
+  isPending: boolean;
+  error: unknown;
+  refetch: () => void;
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
@@ -17,15 +22,25 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // This is a mock implementation that will be replaced with a real auth
-  // system in the future
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const { data, isPending, error, refetch } = authClient.useSession();
+  const login = () => {
+    authClient.signIn.social({
+      provider: "google",
+      callbackURL: window.location.origin
+    })
+  }
+
+  const logout = () => {
+    authClient.signOut();
+  }
 
   const value = {
-    isAuthenticated,
+    data,
+    isPending,
+    error,
+    refetch,
+    isAuthenticated: !!data,
     login,
     logout
   };
