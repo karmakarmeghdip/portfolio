@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = () => {
     authClient.signIn.social({
       provider: "google",
-      callbackURL: window.location.origin
+      // callbackURL: window.location.origin
     })
   }
 

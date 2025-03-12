@@ -17,6 +17,7 @@ export const api = new Hono()
     }),
   )
   .on(["GET", "POST"], "/api/auth/**", (c) => auth.handler(c.req.raw))
+  .get("/", (c) => c.redirect("https://meghdip.is-a.dev"))
   .route("/", spotifyRoute);
 
 Deno.serve(api.fetch);
