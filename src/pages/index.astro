@@ -1,11 +1,107 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import { SpotifyCard } from "@/components/spotify-card";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { MeghdipAvatar } from "@/components/avatar";
+import { GithubCard } from "@/components/github";
 ---
 
 <Layout>
-	<Welcome />
+	<div class="container mx-auto py-10 px-4 max-w-4xl">
+		{/* Hero Section with Avatar */}
+		<div class="flex flex-col md:flex-row items-center gap-6 mb-10">
+			<MeghdipAvatar client:idle />
+
+			<div class="text-center md:text-left">
+				<h1 class="text-4xl font-bold mb-2">Meghdip Karmakar</h1>
+				<p class="text-xl text-muted-foreground mb-4">
+					Fullstack Developer & AI Enthusiast
+				</p>
+				<div class="flex flex-wrap gap-2 justify-center md:justify-start">
+					<a class={buttonVariants()} href="/contact">Contact Me</a>
+
+					<a class={buttonVariants({ variant: "outline" })} href="/projects"
+						>View Work</a
+					>
+				</div>
+			</div>
+		</div>
+
+		{/* About Section */}
+		<Card className="mb-8">
+			<CardHeader>
+				<CardTitle>About Me</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<p class="text-lg">
+					I'm a B.Tech student in Information Technology at Kalyani Government
+					Engineering College (2022-2026). I'm passionate about backend
+					development, AI/ML, and Web3 technologies. I enjoy participating in
+					hackathons and have won recognition for projects like NFTree. When I'm
+					not coding, I'm constantly exploring new technologies and frameworks
+					to expand my skill set.
+				</p>
+			</CardContent>
+		</Card>
+
+		{/* Skills Section */}
+		<Card className="mb-8">
+			<CardHeader>
+				<CardTitle>Skills & Technologies</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<div class="space-y-4">
+					<div>
+						<h3 class="font-medium mb-2">Programming Languages</h3>
+						<div class="flex flex-wrap gap-2">
+							<Badge>JavaScript</Badge>
+							<Badge>TypeScript</Badge>
+							<Badge>Rust</Badge>
+							<Badge>Go</Badge>
+							<Badge>Python</Badge>
+							<Badge>SQL</Badge>
+						</div>
+					</div>
+
+					<div>
+						<h3 class="font-medium mb-2">Frameworks & Libraries</h3>
+						<div class="flex flex-wrap gap-2">
+							<Badge>React</Badge>
+							<Badge>Express.js</Badge>
+							<Badge>Hono</Badge>
+							<Badge>ElysiaJS</Badge>
+							<Badge>Prisma</Badge>
+							<Badge>Drizzle</Badge>
+							<Badge>Gin</Badge>
+							<Badge>Axum</Badge>
+							<Badge>Next.js</Badge>
+							<Badge>Tailwind CSS</Badge>
+						</div>
+					</div>
+
+					<div>
+						<h3 class="font-medium mb-2">Domains</h3>
+						<div class="flex flex-wrap gap-2">
+							<Badge variant="secondary">Backend Development</Badge>
+							<Badge variant="secondary">DevOps</Badge>
+							<Badge variant="secondary">AI/ML</Badge>
+							<Badge variant="secondary">Web3</Badge>
+							<Badge variant="secondary">Frontend Development</Badge>
+						</div>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+
+		{/* GitHub and Spotify Cards */}
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+			{/* GitHub Profile Card Placeholder */}
+			<GithubCard client:only="react" />
+
+			{/* Spotify Now Playing Card Placeholder */}
+			<SpotifyCard client:visible />
+		</div>
+	</div>
 </Layout>

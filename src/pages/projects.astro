@@ -1,0 +1,107 @@
+---
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import Layout from "@/layouts/Layout.astro";
+import { ExternalLink } from "lucide-react";
+
+interface Project {
+  title: string;
+  description: string;
+  technologies: string[];
+  githubLink: string;
+}
+
+const projects: Project[] = [
+  {
+    title: "Crowdflow (Backend)",
+    description:
+      "An edge API for our Smart India Hackathon 2023 finals project, Crowdflow.",
+    technologies: [
+      "Typescript",
+      "Hono",
+      "Drizzle",
+      "Cloudflare Workers",
+      "Cloudflare D1",
+    ],
+    githubLink: "https://github.com/Takshashakti/CrowdflowWorkers",
+  },
+  {
+    title: "SonorousPlay",
+    description: "A peer to peer music sharing web app using IPFS.",
+    technologies: ["Javascript", "IPFS", "React"],
+    githubLink: "https://github.com/Hacker5-UnitEd/SonorousPlay",
+  },
+  {
+    title: "NFTree",
+    description:
+      "An app that lets tree planters take pictures of their trees and post updates of the tree daily to get carbon credits, which is an ERC20 token and can be sold to companies looking to offset their carbon emissions. Currently deployed on Avalanche Fuji Testnet.",
+    technologies: [
+      "Typescript",
+      "NextJS",
+      "TailwindCSS",
+      "ThirdWebSDK",
+      "Python",
+      "FastAPI",
+      "Turso",
+      "Solidity",
+      "Remix IDE",
+      "Avalanche Fuji Testnet",
+      "Metamask",
+    ],
+    githubLink: "https://github.com/Bugs-Layers/nftree",
+  },
+];
+---
+
+<Layout>
+  <Card className="w-full">
+    <CardHeader>
+      <CardTitle>Projects</CardTitle>
+      <CardDescription
+        >My portfolio of projects demonstrating my skills and experience</CardDescription
+      >
+    </CardHeader>
+    <CardContent className="space-y-6">
+      {
+        projects.map((project, index) => (
+          <Card key={index} className="overflow-hidden">
+            <CardHeader>
+              <CardTitle>{project.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p class="mb-4">{project.description}</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                {project.technologies.map((tech) => (
+                  <Badge key={tech} variant="secondary">
+                    {tech}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="bg-muted/50 p-4">
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href={project.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2"
+                >
+                  <span>View on GitHub</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))
+      }
+    </CardContent>
+  </Card>
+</Layout>
