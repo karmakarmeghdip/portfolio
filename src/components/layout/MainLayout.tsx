@@ -17,6 +17,7 @@ import {
 import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon } from "lucide-react";
 // import { useAuth } from "@/contexts/AuthContext.tsx";
 import { AuthComponent } from "@/components/auth.tsx";
+import { authClient } from "@/lib/auth-client";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -25,11 +26,8 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, activePage }: MainLayoutProps) {
-  const { isAuthenticated, login, logout } = {
-    isAuthenticated: false,
-    login: () => { },
-    logout: () => { }
-  };
+  const { data, error, isPending, refetch } = authClient.useSession();
+  const isAuthenticated = data
   const setActivePage = (page: string) => {
     console.log(page);
   };

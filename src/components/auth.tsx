@@ -1,17 +1,21 @@
-// import { useAuth } from "@/contexts/AuthContext.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { authClient } from "@/lib/auth-client";
 import { LogInIcon, UserIcon } from "lucide-react";
 
 export const AuthComponent = () => {
-  const { isAuthenticated, login, logout, data } = {
-    isAuthenticated: false,
-    login: () => { },
-    logout: () => { },
-    data: undefined
+  const { data } = authClient.useSession();
+  const login = () => {
+    authClient.signIn.social({
+      provider: 'google',
+      // callbackURL: '/'
+    })
+  };
+  const logout = () => {
+    authClient.signOut();
   };
   const profileImageUrl = data?.user?.image as string || null;
   const name = data?.user?.name as string || null;
-  return <>{!isAuthenticated ? (
+  return <>{!data ? (
     <Button
       variant="outline"
       className="flex w-full gap-2 justify-center"
