@@ -1,0 +1,2 @@
+/_actions/getSpotifyData
+  Cache-Control: public, max-age=15, must-revalidate

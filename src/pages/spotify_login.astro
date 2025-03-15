@@ -1,0 +1,6 @@
+---
+import { spotifyApi } from "@/actions/spotify";
+const scopes = ["user-read-currently-playing", "user-read-playback-state"];
+const authorizeURL = spotifyApi.createAuthorizeURL(scopes, "state");
+return Astro.redirect(authorizeURL);
+---

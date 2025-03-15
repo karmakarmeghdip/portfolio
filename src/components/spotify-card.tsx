@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
-// import { hc } from "hono/client"
+import { actions } from "astro:actions";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card.tsx";
 import { useEffect, useState } from "react";
@@ -26,10 +26,8 @@ export const SpotifyCard = () => {
   useEffect(() => {
     const fetchNowPlaying = async () => {
       try {
-        // const response = await client.api.spotify["now-playing"].$get();
-        throw new Error("Not implemented");
-        // const data = await response.json();
-        const data = {};
+        const response = await actions.getSpotifyData();
+        const data = response.data
         setTrack(data as {
           isPlaying: true;
           title: string;

@@ -59,6 +59,7 @@ export default defineConfig({
   },
   integrations: [react()],
   output: "server",
+
   vite: {
     plugins: [tailwindcss()],
     resolve: {
@@ -73,5 +74,6 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
+    imageService: "compile",
   }),
 });
