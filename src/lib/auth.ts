@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./schema/auth-schema";
 import { db } from "./db";
 import {
+  BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
@@ -13,6 +14,7 @@ export const auth = betterAuth({
     provider: "sqlite",
     schema,
   }),
+  secret: BETTER_AUTH_SECRET,
   socialProviders: {
     google: {
       clientId: GOOGLE_CLIENT_ID!,

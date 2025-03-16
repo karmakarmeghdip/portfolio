@@ -2,12 +2,11 @@ import { Button } from "@/components/ui/button.tsx";
 import { authClient } from "@/lib/auth-client";
 import { LogInIcon, UserIcon } from "lucide-react";
 
-export const AuthComponent = () => {
-  const { data } = authClient.useSession();
+export const AuthComponent = ({ session }: { session: any }) => {
+  const data = session;
   const login = () => {
     authClient.signIn.social({
       provider: 'google',
-      // callbackURL: '/'
     })
   };
   const logout = () => {

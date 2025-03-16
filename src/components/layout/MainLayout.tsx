@@ -15,19 +15,16 @@ import {
   SidebarTrigger
 } from "@/components/ui/sidebar.tsx";
 import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon } from "lucide-react";
-// import { useAuth } from "@/contexts/AuthContext.tsx";
 import { AuthComponent } from "@/components/auth.tsx";
-import { authClient } from "@/lib/auth-client";
 
 interface MainLayoutProps {
   children: ReactNode;
   activePage: string;
-  // setActivePage: (page: string) => void;
+  session: { session: any, user: any } | null;
 }
 
-export function MainLayout({ children, activePage }: MainLayoutProps) {
-  const { data, error, isPending, refetch } = authClient.useSession();
-  const isAuthenticated = data
+export function MainLayout({ children, activePage, session }: MainLayoutProps) {
+  const isAuthenticated = session;
   const setActivePage = (page: string) => {
     console.log(page);
   };
@@ -127,7 +124,7 @@ export function MainLayout({ children, activePage }: MainLayoutProps) {
           </SidebarContent>
 
           <SidebarFooter>
-            <AuthComponent />
+            <AuthComponent session={session} />
           </SidebarFooter>
         </Sidebar>
 
