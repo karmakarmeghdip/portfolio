@@ -1,6 +1,23 @@
 ---
-import { spotifyApi } from "@/actions/spotify";
-const scopes = ["user-read-currently-playing", "user-read-playback-state"];
-const authorizeURL = spotifyApi.createAuthorizeURL(scopes, "state");
-return Astro.redirect(authorizeURL);
+// import { ensureValidToken } from "@/actions/spotify";
+// import {
+//   SPOTIFY_CLIENT_ID,
+//   SPOTIFY_CLIENT_SECRET,
+//   SPOTIFY_REDIRECT_URI,
+// } from "astro:env/server";
+// import SpotifyWebApi from "spotify-web-api-node";
+
+// const spotifyApi = new SpotifyWebApi({
+//   clientId: SPOTIFY_CLIENT_ID,
+//   clientSecret: SPOTIFY_CLIENT_SECRET,
+//   redirectUri: SPOTIFY_REDIRECT_URI,
+// });
+
+// // Get token from cache or refresh it
+// await ensureValidToken(spotifyApi);
+// const scopes = ["user-read-currently-playing", "user-read-playback-state"];
+// const authorizeURL = spotifyApi.createAuthorizeURL(scopes, "state");
+// return Astro.redirect(authorizeURL);
 ---
+
+<h1>Not Implemented</h1>

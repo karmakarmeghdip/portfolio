@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { SpotifyCard } from "@/components/spotify-card";
+import SpotifyCard from "@/components/spotify-card.astro";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -101,7 +101,7 @@ import { GithubCard } from "@/components/github";
 			<GithubCard client:only="react" />
 
 			{/* Spotify Now Playing Card Placeholder */}
-			<SpotifyCard client:visible />
+			<SpotifyCard />
 		</div>
 	</div>
 </Layout>
