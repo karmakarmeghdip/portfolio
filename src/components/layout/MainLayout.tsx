@@ -14,7 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from "@/components/ui/sidebar.tsx";
-import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon } from "lucide-react";
+import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon, UsersIcon } from "lucide-react";
 import { AuthComponent } from "@/components/auth.tsx";
 
 interface MainLayoutProps {
@@ -114,6 +114,18 @@ export function MainLayout({ children, activePage, session }: MainLayoutProps) {
                         >
                           <MailIcon />
                           <span>Contact Me</span>
+                        </SidebarMenuButton>
+                      </a>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <a href="/forum">
+                        <SidebarMenuButton
+                          isActive={activePage === "forum"}
+                          onClick={() => setActivePage("forum")}
+                          tooltip="Forum"
+                        >
+                          <UsersIcon />
+                          <span>Forum</span>
                         </SidebarMenuButton>
                       </a>
                     </SidebarMenuItem>
