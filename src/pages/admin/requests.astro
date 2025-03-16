@@ -1,0 +1,59 @@
+---
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { contact } from "@/lib/schema";
+import { user } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import Layout from "@/layouts/Layout.astro";
+import { Avatar } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { actions } from "astro:actions";
+import { DeleteRequest } from "@/components/delete-request";
+
+const authData = await auth.api.getSession({ headers: Astro.request.headers });
+if (!authData || authData.user.email !== "karmakarmeghdip@gmail.com") {
+  return Astro.redirect("/");
+}
+
+const contacts = await db
+  .select()
+  .from(contact)
+  .leftJoin(user, eq(contact.created_by, user.id))
+  .all();
+
+// TODO: Add delete functionality and view details functionality
+---
+
+<Layout title="Contact Requests | Admin">
+  <div class="container mx-auto p-4 md:p-6">
+    <h1 class="text-3xl font-bold mb-6">Job Requests</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {
+        contacts.map((item) => {
+          if (!item.user) {
+            return null;
+          }
+          return <DeleteRequest item={item} client:idle />;
+        })
+      }
+    </div>
+
+    {
+      contacts.length === 0 && (
+        <div class="text-center p-10">
+          <p class="text-xl text-muted-foreground">No job requests found</p>
+        </div>
+      )
+    }
+  </div>
+</Layout>

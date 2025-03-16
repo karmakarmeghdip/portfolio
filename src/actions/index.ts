@@ -1,1 +1,6 @@
-export const server = {};
+import { contactDelete, contactSubmit } from "./contact";
+
+export const server = {
+  contactSubmit,
+  contactDelete,
+};
