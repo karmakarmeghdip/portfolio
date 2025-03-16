@@ -5,7 +5,7 @@ import react from "@astrojs/react";
 
 import tailwindcss from "@tailwindcss/vite";
 
-import cloudflare from "@astrojs/cloudflare";
+import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
@@ -57,6 +57,7 @@ export default defineConfig({
       }),
     },
   },
+
   integrations: [react()],
   output: "server",
 
@@ -64,17 +65,15 @@ export default defineConfig({
     // @ts-expect-error
     plugins: [tailwindcss()],
     resolve: {
-      // @ts-expect-error
-      alias: import.meta.env.PROD && {
-        "react-dom/server": "react-dom/server.edge",
-      },
+      // alias: import.meta.env.PROD && {
+      //   "react-dom/server": "react-dom/server.edge",
+      // },
     },
   },
 
-  adapter: cloudflare({
-    platformProxy: {
+  adapter: vercel({
+    webAnalytics: {
       enabled: true,
     },
-    imageService: "compile",
   }),
 });
