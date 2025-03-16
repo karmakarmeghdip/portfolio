@@ -2,7 +2,6 @@
 import { auth } from "@/lib/auth";
 import "../styles/global.css";
 import { MainLayout } from "@/components/layout/MainLayout";
-
 const page = Astro.url.pathname.split("/")[1] || "home";
 const session = await auth.api.getSession({
 	headers: Astro.request.headers,
@@ -39,7 +38,7 @@ const session = await auth.api.getSession({
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Meghdip's Website</title>
 	</head>
 	<body>
 		<MainLayout activePage={page} session={session} client:load>

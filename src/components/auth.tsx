@@ -7,10 +7,14 @@ export const AuthComponent = ({ session }: { session: any }) => {
   const login = () => {
     authClient.signIn.social({
       provider: 'google',
+      callbackURL: '/'
     })
   };
-  const logout = () => {
-    authClient.signOut();
+  const logout = async () => {
+    await authClient.signOut();
+    if (typeof window !== 'undefined') {
+      window.location.reload()
+    }
   };
   const profileImageUrl = data?.user?.image as string || null;
   const name = data?.user?.name as string || null;
