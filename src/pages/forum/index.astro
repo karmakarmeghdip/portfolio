@@ -1,1 +1,222 @@
-<h1>Not Implemented</h1>
+---
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ForumAvatar } from "@/components/forum-avatar";
+import { db } from "@/lib/db";
+import { posts, comments, votes } from "@/lib/schema/forum-schema";
+import { count, eq, desc, asc, sql } from "drizzle-orm";
+import { user } from "@/lib/schema/auth-schema";
+
+const sortBy = Astro.url.searchParams.get("sort") || "latest";
+
+// Query posts with vote counts and comment counts
+const postsData = await db
+  .select({
+    id: posts.id,
+    type: posts.type,
+    title: posts.title,
+    content: posts.content,
+    createdAt: posts.createdAt,
+    createdBy: posts.createdBy,
+    // Get author information from users table
+    author: {
+      name: user.name,
+      username: user.email,
+      image: user.image,
+    },
+    // Count votes with a subquery
+    votes: sql<number>`COALESCE(
+      (SELECT SUM(${votes.value}) FROM ${votes} WHERE ${votes.postId} = ${posts.id}), 0
+    )`.as("votes"),
+    // Count comments with a subquery
+    commentCount: sql<number>`(
+      SELECT COUNT(*) FROM ${comments} WHERE ${comments.postId} = ${posts.id}
+    )`.as("commentCount"),
+  })
+  .from(posts)
+  .innerJoin(user, eq(posts.createdBy, user.id)) // Changed from leftJoin to innerJoin
+  .orderBy(sortBy === "latest" ? desc(posts.createdAt) : desc(sql`votes`))
+  .limit(15);
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+
+  if (diffSec < 60) return `${diffSec} seconds ago`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} minutes ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
+  return `${Math.floor(diffSec / 86400)} days ago`;
+}
+
+// Format URL for display
+function formatUrl(url: string) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return url;
+  }
+}
+---
+
+<Layout>
+  <main class="container mx-auto py-8 px-4">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold tracking-tight">Developer Forum</h1>
+      <div class="flex gap-4">
+        <Button variant={sortBy === "latest" ? "outline" : "ghost"}>
+          <a href="/forum?sort=latest">Latest</a>
+        </Button>
+        <Button variant={sortBy === "top" ? "outline" : "ghost"}>
+          <a href="/forum?sort=top">Top</a>
+        </Button>
+        <Button variant="ghost">Hot</Button>
+        <Button variant="default">New Post</Button>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      {
+        postsData.length === 0 ? (
+          <div class="text-center text-muted-foreground">No posts found</div>
+        ) : (
+          postsData.map((post) => (
+            <Card key={post.id} className="hover:shadow-md transition-shadow">
+              <div class="flex overflow-hidden overflow-ellipsis">
+                <div class="flex flex-col items-center py-4 px-2 border-r">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto px-2 text-lg font-bold"
+                  >
+                    ▲
+                  </Button>
+                  <span class="font-bold my-1">{post.votes}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto px-2 text-lg font-bold"
+                  >
+                    ▼
+                  </Button>
+                </div>
+
+                <div class="flex-1 w-8/12">
+                  <CardHeader className="py-3">
+                    <div>
+                      <Badge
+                        variant={
+                          post.type === "text"
+                            ? "secondary"
+                            : post.type === "link"
+                              ? "outline"
+                              : "default"
+                        }
+                        className="mb-2"
+                      >
+                        {post.type}
+                      </Badge>
+
+                      <h2 class="text-xl font-bold hover:text-primary">
+                        <a href={`/forum/post/${post.id}`}>{post.title}</a>
+                      </h2>
+
+                      {post.type === "link" && (
+                        <a
+                          href={post.content}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="text-sm text-muted-foreground hover:underline"
+                        >
+                          {formatUrl(post.content)}
+                        </a>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="py-2">
+                    {post.type === "text" && (
+                      <p class="text-muted-foreground overflow-hidden break-words whitespace-normal">
+                        <span class="line-clamp-2 overflow-hidden">
+                          {post.content}
+                        </span>
+                      </p>
+                    )}
+
+                    {post.type === "image" && (
+                      <div class="max-h-[200px] overflow-hidden rounded-md">
+                        <img
+                          src={post.content}
+                          alt={post.title}
+                          class="w-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="py-3 text-sm text-muted-foreground">
+                    <div class="flex items-center gap-6">
+                      <div class="flex items-center gap-2">
+                        <ForumAvatar
+                          name={post.author.name}
+                          image={post.author.image}
+                          username={post.author.username}
+                        />
+                        <span>{post.author.name}</span>
+                      </div>
+
+                      <span>{formatDate(post.createdAt)}</span>
+
+                      <a
+                        href={`/forum/post/${post.id}`}
+                        class="flex items-center gap-1 hover:text-primary"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-message-square"
+                        >
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                        <span>{post.commentCount} comments</span>
+                      </a>
+
+                      <Button variant="ghost" size="sm" className="h-auto px-2">
+                        Share
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </div>
+              </div>
+            </Card>
+          ))
+        )
+      }
+    </div>
+
+    {
+      postsData.length !== 0 && (
+        <div class="mt-8 text-center">
+          <Button variant="outline">Load More</Button>
+        </div>
+      )
+    }
+  </main>
+</Layout>
