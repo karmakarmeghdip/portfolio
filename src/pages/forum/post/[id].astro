@@ -23,6 +23,8 @@ import { user } from "@/lib/schema/auth-schema";
 
 const id = Astro.params.id;
 
+Astro.response.headers.set("Cache-Control", "max-age=0, s-maxage=60");
+
 // Get post data
 const postData = await db
   .select({

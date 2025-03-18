@@ -1,0 +1,220 @@
+---
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ForumAvatar } from "@/components/forum-avatar";
+import { db } from "@/lib/db";
+import {
+  posts,
+  comments,
+  votes,
+  postTags,
+  tags,
+} from "@/lib/schema/forum-schema";
+import { eq, sql } from "drizzle-orm";
+import { user } from "@/lib/schema/auth-schema";
+import ForumVote from "./forum-vote";
+
+interface Props {
+  postId: string;
+}
+
+const { postId } = Astro.props;
+
+// Fetch single post data with all details
+const postData = await db
+  .select({
+    id: posts.id,
+    type: posts.type,
+    title: posts.title,
+    content: posts.content,
+    createdAt: posts.createdAt,
+    createdBy: posts.createdBy,
+    // Get author information from users table
+    author: {
+      name: user.name,
+      username: user.email,
+      image: user.image,
+    },
+    // Count votes with a subquery
+    votes: sql<number>`COALESCE(
+      (SELECT SUM(${votes.value}) FROM ${votes} WHERE ${votes.postId} = ${posts.id}), 0
+    )`.as("votes"),
+    // Count comments with a subquery
+    commentCount: sql<number>`(
+      SELECT COUNT(*) FROM ${comments} WHERE ${comments.postId} = ${posts.id}
+    )`.as("commentCount"),
+    // Get tags with a subquery
+    tags: sql<string>`(
+      SELECT json_group_array(
+        json_object(
+          'id', ${tags.id}, 
+          'name', ${tags.name}
+        )
+      ) 
+      FROM ${postTags} 
+      JOIN ${tags} ON ${postTags.tagId} = ${tags.id}
+      WHERE ${postTags.postId} = ${posts.id}
+    )`.as("tags"),
+  })
+  .from(posts)
+  .innerJoin(user, eq(posts.createdBy, user.id))
+  .where(eq(posts.id, postId))
+  .limit(1);
+
+const post = postData[0];
+
+// Parse tags JSON
+const parsedTags = post.tags
+  ? (JSON.parse(post.tags) as { id: string; name: string }[])
+  : [];
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+
+  if (diffSec < 60) return `${diffSec} seconds ago`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} minutes ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
+  return `${Math.floor(diffSec / 86400)} days ago`;
+}
+
+// Format URL for display
+function formatUrl(url: string) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return url;
+  }
+}
+---
+
+<Card className="hover:shadow-md transition-shadow">
+  <div class="flex overflow-hidden overflow-ellipsis">
+    <div class="flex flex-col items-center py-4 px-2 border-r">
+      <ForumVote postId={post.id} votes={post.votes} client:idle />
+    </div>
+
+    <div class="flex-1 w-8/12">
+      <CardHeader className="py-3">
+        <div>
+          {
+            parsedTags.length > 0 ? (
+              <div class="flex flex-wrap gap-1 mb-2">
+                {parsedTags.map((tag) => (
+                  <Badge key={tag.id} variant="outline" className="text-xs">
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <Badge
+                variant={
+                  post.type === "text"
+                    ? "secondary"
+                    : post.type === "link"
+                      ? "outline"
+                      : "default"
+                }
+                className="mb-2"
+              >
+                {post.type}
+              </Badge>
+            )
+          }
+
+          <h2 class="text-xl font-bold hover:text-primary">
+            <a href={`/forum/post/${post.id}`}>{post.title}</a>
+          </h2>
+
+          {
+            post.type === "link" && (
+              <a
+                href={post.content}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-muted-foreground hover:underline"
+              >
+                {formatUrl(post.content)}
+              </a>
+            )
+          }
+        </div>
+      </CardHeader>
+
+      <CardContent className="py-2">
+        {
+          post.type === "text" && (
+            <p class="text-muted-foreground overflow-hidden break-words whitespace-normal">
+              <span class="line-clamp-2 overflow-hidden">{post.content}</span>
+            </p>
+          )
+        }
+
+        {
+          post.type === "image" && (
+            <div class="max-h-[200px] overflow-hidden rounded-md">
+              <img
+                src={post.content}
+                alt={post.title}
+                class="w-full object-cover"
+              />
+            </div>
+          )
+        }
+      </CardContent>
+
+      <CardFooter className="py-3 text-sm text-muted-foreground">
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <ForumAvatar
+              name={post.author.name}
+              image={post.author.image}
+              username={post.author.username}
+              client:idle
+            />
+            <span>{post.author.name}</span>
+          </div>
+
+          <span>{formatDate(post.createdAt)}</span>
+
+          <a
+            href={`/forum/post/${post.id}`}
+            class="flex items-center gap-1 hover:text-primary"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-message-square"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              ></path>
+            </svg>
+            <span>{post.commentCount} comments</span>
+          </a>
+
+          <Button variant="ghost" size="sm" className="h-auto px-2">
+            Share
+          </Button>
+        </div>
+      </CardFooter>
+    </div>
+  </div>
+</Card>

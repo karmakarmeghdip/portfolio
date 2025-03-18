@@ -3,6 +3,7 @@ import {
   int,
   sqliteTable,
   text,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { user } from "./auth-schema";
 
@@ -56,6 +57,20 @@ export const votes = sqliteTable("votes", {
   createdBy: text("created_by").notNull().references(() => user.id, {
     onDelete: "cascade",
   }),
+}, (table) => {
+  return {
+    postCreatedByUniqueIndex: uniqueIndex("votes_post_createdBy_unique").on(
+      table.postId,
+      table.createdBy,
+    ),
+    postCommentCreatedByUnique: uniqueIndex(
+      "votes_post_comment_createdBy_unique",
+    ).on(
+      table.postId,
+      table.commentId,
+      table.createdBy,
+    ),
+  };
 });
 
 export const tags = sqliteTable("tags", {

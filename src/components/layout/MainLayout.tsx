@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar.tsx";
 import { HomeIcon, BriefcaseIcon, CodeIcon, TrophyIcon, UserIcon, MailIcon, LogInIcon, UsersIcon } from "lucide-react";
 import { AuthComponent } from "@/components/auth.tsx";
+import Radio from "@/components/jpop-radio";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -24,7 +25,6 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, activePage, session }: MainLayoutProps) {
-  const isAuthenticated = session;
   const setActivePage = (page: string) => {
     console.log(page);
   };
@@ -145,6 +145,7 @@ export function MainLayout({ children, activePage, session }: MainLayoutProps) {
             <div className="flex items-center gap-2">
               <SidebarTrigger className="flex" />
             </div>
+            <Radio />
             <ThemeToggle />
           </header>
 

@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX `votes_post_createdBy_unique` ON `votes` (`post_id`,`created_by`);--> statement-breakpoint
+CREATE UNIQUE INDEX `votes_post_comment_createdBy_unique` ON `votes` (`post_id`,`comment_id`,`created_by`);

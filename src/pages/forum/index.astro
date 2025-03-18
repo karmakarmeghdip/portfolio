@@ -1,93 +1,30 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ForumAvatar } from "@/components/forum-avatar";
-import { db } from "@/lib/db";
-import { posts, comments, votes, postTags, tags } from "@/lib/schema/forum-schema";
-import { count, eq, desc, asc, sql } from "drizzle-orm";
-import { user } from "@/lib/schema/auth-schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { db } from "@/lib/db";
+import { posts } from "@/lib/schema/forum-schema";
+import { desc, sql } from "drizzle-orm";
+import { Skeleton } from "@/components/ui/skeleton";
+import PostsCard from "@/components/posts-card.astro";
 
 const sortBy = Astro.url.searchParams.get("sort") || "latest";
 const success = Astro.url.searchParams.get("success");
-// Query posts with vote counts and comment counts
+
+// Simple query to get just the post IDs
 const postsData = await db
   .select({
     id: posts.id,
-    type: posts.type,
-    title: posts.title,
-    content: posts.content,
-    createdAt: posts.createdAt,
-    createdBy: posts.createdBy,
-    // Get author information from users table
-    author: {
-      name: user.name,
-      username: user.email,
-      image: user.image,
-    },
-    // Count votes with a subquery
-    votes: sql<number>`COALESCE(
-      (SELECT SUM(${votes.value}) FROM ${votes} WHERE ${votes.postId} = ${posts.id}), 0
-    )`.as("votes"),
-    // Count comments with a subquery
-    commentCount: sql<number>`(
-      SELECT COUNT(*) FROM ${comments} WHERE ${comments.postId} = ${posts.id}
-    )`.as("commentCount"),
-    // Get tags with a subquery
-    tags: sql<string>`(
-      SELECT json_group_array(
-        json_object(
-          'id', ${tags.id}, 
-          'name', ${tags.name}
-        )
-      ) 
-      FROM ${postTags} 
-      JOIN ${tags} ON ${postTags.tagId} = ${tags.id}
-      WHERE ${postTags.postId} = ${posts.id}
-    )`.as("tags"),
   })
   .from(posts)
-  .innerJoin(user, eq(posts.createdBy, user.id)) // Changed from leftJoin to innerJoin
-  .orderBy(sortBy === "latest" ? desc(posts.createdAt) : desc(sql`votes`))
+  .orderBy(sortBy === "latest" ? 
+    desc(posts.createdAt) : 
+    desc(sql`COALESCE(
+      (SELECT SUM(value) FROM votes WHERE postId = ${posts.id}), 0
+    )`)
+  )
   .limit(15);
-
-// Parse tags JSON string into actual arrays of objects
-const postsWithParsedTags = postsData.map(post => ({
-  ...post,
-  tags: post.tags ? JSON.parse(post.tags) as {id: string, name: string}[] : []
-}));
-
-// Format date helper
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-
-  if (diffSec < 60) return `${diffSec} seconds ago`;
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} minutes ago`;
-  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
-  return `${Math.floor(diffSec / 86400)} days ago`;
-}
-
-// Format URL for display
-function formatUrl(url: string) {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.hostname;
-  } catch (e) {
-    return url;
-  }
-}
-
 ---
 
 <Layout>
@@ -128,140 +65,39 @@ function formatUrl(url: string) {
 
     <div class="space-y-4">
       {
-        postsWithParsedTags.length === 0 ? (
+        postsData.length === 0 ? (
           <div class="text-center text-muted-foreground">No posts found</div>
         ) : (
-          postsWithParsedTags.map((post) => (
-            <Card key={post.id} className="hover:shadow-md transition-shadow">
-              <div class="flex overflow-hidden overflow-ellipsis">
-                <div class="flex flex-col items-center py-4 px-2 border-r">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-auto px-2 text-lg font-bold"
-                  >
-                    ▲
-                  </Button>
-                  <span class="font-bold my-1">{post.votes}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-auto px-2 text-lg font-bold"
-                  >
-                    ▼
-                  </Button>
-                </div>
-
-                <div class="flex-1 w-8/12">
-                  <CardHeader className="py-3">
-                    <div>
-                      {post.tags && post.tags.length > 0 ? (
-                        <div class="flex flex-wrap gap-1 mb-2">
-                          {post.tags.map((tag) => (
-                            <Badge 
-                              key={tag.id}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {tag.name}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <Badge
-                          variant={
-                            post.type === "text"
-                              ? "secondary"
-                              : post.type === "link"
-                                ? "outline"
-                                : "default"
-                          }
-                          className="mb-2"
-                        >
-                          {post.type}
-                        </Badge>
-                      )}
-
-                      <h2 class="text-xl font-bold hover:text-primary">
-                        <a href={`/forum/post/${post.id}`}>{post.title}</a>
-                      </h2>
-
-                      {post.type === "link" && (
-                        <a
-                          href={post.content}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="text-sm text-muted-foreground hover:underline"
-                        >
-                          {formatUrl(post.content)}
-                        </a>
-                      )}
+          postsData.map((post) => (
+            <div>
+              <PostsCard postId={post.id} server:defer>
+                <div class="flex border rounded-lg p-4 hover:shadow-md transition-shadow" slot="fallback">
+                  <div class="flex flex-col items-center py-4 px-2 border-r">
+                    <Skeleton className="h-6 w-8 mb-2" />
+                    <Skeleton className="h-4 w-6 mb-2" />
+                    <Skeleton className="h-6 w-8" />
+                  </div>
+                  <div class="flex-1 pl-4">
+                    <div class="py-3">
+                      <Skeleton className="h-4 w-16 mb-2" />
+                      <Skeleton className="h-6 w-full max-w-md mb-1" />
+                      <Skeleton className="h-4 w-32" />
                     </div>
-                  </CardHeader>
-
-                  <CardContent className="py-2">
-                    {post.type === "text" && (
-                      <p class="text-muted-foreground overflow-hidden break-words whitespace-normal">
-                        <span class="line-clamp-2 overflow-hidden">
-                          {post.content}
-                        </span>
-                      </p>
-                    )}
-
-                    {post.type === "image" && (
-                      <div class="max-h-[200px] overflow-hidden rounded-md">
-                        <img
-                          src={post.content}
-                          alt={post.title}
-                          class="w-full object-cover"
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-
-                  <CardFooter className="py-3 text-sm text-muted-foreground">
-                    <div class="flex items-center gap-6">
-                      <div class="flex items-center gap-2">
-                        <ForumAvatar
-                          name={post.author.name}
-                          image={post.author.image}
-                          username={post.author.username}
-                          client:idle
-                        />
-                        <span>{post.author.name}</span>
-                      </div>
-
-                      <span>{formatDate(post.createdAt)}</span>
-
-                      <a
-                        href={`/forum/post/${post.id}`}
-                        class="flex items-center gap-1 hover:text-primary"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="lucide lucide-message-square"
-                        >
-                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                        </svg>
-                        <span>{post.commentCount} comments</span>
-                      </a>
-
-                      <Button variant="ghost" size="sm" className="h-auto px-2">
-                        Share
-                      </Button>
+                    
+                    <div class="py-2">
+                      <Skeleton className="h-20 w-full max-w-lg mb-4" />
                     </div>
-                  </CardFooter>
+                    
+                    <div class="py-3 flex items-center gap-4">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Card>
+              </PostsCard>
+            </div>
           ))
         )
       }
