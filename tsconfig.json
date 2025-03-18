@@ -16,6 +16,10 @@
         "./src/*"
       ]
     },
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "types": [
+      "vite-plugin-pwa/client",
+      "vite-plugin-pwa/info"
+    ]
   }
 }

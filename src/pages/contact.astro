@@ -18,7 +18,7 @@ import { AlertCircle } from "lucide-react";
 
 const data = await auth.api.getSession({ headers: Astro.request.headers });
 if (!data) {
-  return Astro.redirect("/");
+  return Astro.redirect("/login");
 }
 const name = data.user.name || "";
 const email = data.user.email || "";

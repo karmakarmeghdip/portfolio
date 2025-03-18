@@ -13,6 +13,7 @@ export const AuthComponent = ({ session }: { session: any }) => {
   const logout = async () => {
     await authClient.signOut();
     if (typeof window !== 'undefined') {
+      window.location.href = '/'
       window.location.reload()
     }
   };

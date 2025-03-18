@@ -63,13 +63,13 @@ export default defineConfig({
     react(),
     AstroPWA({
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       includeManifestIcons: true,
       registerType: "autoUpdate",
       workbox: {
         navigateFallback: "/404",
-        globIgnores: ["_server-islands/*"],
+        globIgnores: ["/_server-islands/*"],
       },
       manifest: {
         name: "Meghdip's Website",

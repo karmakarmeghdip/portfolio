@@ -100,39 +100,39 @@ export function MainLayout({ children, activePage, session }: MainLayoutProps) {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {isAuthenticated && (
-              <SidebarGroup>
-                <SidebarGroupLabel>Connect</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <a href="/contact">
-                        <SidebarMenuButton
-                          isActive={activePage === "contact"}
-                          onClick={() => setActivePage("contact")}
-                          tooltip="Contact Me"
-                        >
-                          <MailIcon />
-                          <span>Contact Me</span>
-                        </SidebarMenuButton>
-                      </a>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <a href="/forum">
-                        <SidebarMenuButton
-                          isActive={activePage === "forum"}
-                          onClick={() => setActivePage("forum")}
-                          tooltip="Forum"
-                        >
-                          <UsersIcon />
-                          <span>Forum</span>
-                        </SidebarMenuButton>
-                      </a>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            )}
+
+            <SidebarGroup>
+              <SidebarGroupLabel>Connect</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <a href="/contact">
+                      <SidebarMenuButton
+                        isActive={activePage === "contact"}
+                        onClick={() => setActivePage("contact")}
+                        tooltip="Contact Me"
+                      >
+                        <MailIcon />
+                        <span>Contact Me</span>
+                      </SidebarMenuButton>
+                    </a>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <a href="/forum">
+                      <SidebarMenuButton
+                        isActive={activePage === "forum"}
+                        onClick={() => setActivePage("forum")}
+                        tooltip="Forum"
+                      >
+                        <UsersIcon />
+                        <span>Forum</span>
+                      </SidebarMenuButton>
+                    </a>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
           </SidebarContent>
 
           <SidebarFooter>
