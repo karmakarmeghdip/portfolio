@@ -1,5 +1,6 @@
 ---
 import { auth } from "@/lib/auth";
+import { pwaInfo } from "virtual:pwa-info";
 import "../styles/global.css";
 import { MainLayout } from "@/components/layout/MainLayout";
 const page = Astro.url.pathname.split("/")[1] || "home";
@@ -43,6 +44,8 @@ const session = await auth.api.getSession({
 			content="Meghdip's Personal Website, come discuss Tech with me here"
 		/>
 		<title>Meghdip's Website</title>
+		<script src="/src/pwa.ts"></script>
+		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 	</head>
 	<body>
 		<MainLayout activePage={page} session={session} client:load>

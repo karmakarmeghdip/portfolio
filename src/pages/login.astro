@@ -1,0 +1,11 @@
+---
+
+---
+
+<script>
+  import { authClient } from "@/lib/auth-client";
+  authClient.signIn.social({
+    provider: "google",
+    callbackURL: "/",
+  });
+</script>

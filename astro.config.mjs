@@ -6,6 +6,7 @@ import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
 import vercel from "@astrojs/vercel";
+import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
 export default defineConfig({
@@ -58,7 +59,36 @@ export default defineConfig({
     },
   },
 
-  integrations: [react()],
+  integrations: [
+    react(),
+    AstroPWA({
+      devOptions: {
+        enabled: true,
+      },
+      includeManifestIcons: true,
+      registerType: "autoUpdate",
+      workbox: {
+        navigateFallback: "/404",
+        globIgnores: ["_server-islands/*"],
+      },
+      manifest: {
+        name: "Meghdip's Website",
+        short_name: "Meghdip",
+        description: "Meghdip's personal website",
+        start_url: "/",
+        display: "standalone",
+        theme_color: "#000000",
+        background_color: "#ffffff",
+        icons: [
+          {
+            src: "/favicon.svg",
+            sizes: "any",
+            type: "image/svg+xml",
+          },
+        ],
+      },
+    }),
+  ],
   output: "server",
 
   vite: {

@@ -62,7 +62,7 @@ const postsData = await db
 // Parse tags JSON string into actual arrays of objects
 const postsWithParsedTags = postsData.map(post => ({
   ...post,
-  tags: post.tags ? JSON.parse(post.tags) : []
+  tags: post.tags ? JSON.parse(post.tags) as {id: string, name: string}[] : []
 }));
 
 // Format date helper
