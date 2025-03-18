@@ -1,0 +1,533 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { ForumAvatar } from "@/components/forum-avatar";
+import { db } from "@/lib/db";
+import {
+  posts,
+  comments,
+  votes,
+  postTags,
+  tags,
+} from "@/lib/schema/forum-schema";
+import { eq, desc, sql } from "drizzle-orm";
+import { user } from "@/lib/schema/auth-schema";
+
+const id = Astro.params.id;
+
+// Get post data
+const postData = await db
+  .select({
+    id: posts.id,
+    type: posts.type,
+    title: posts.title,
+    content: posts.content,
+    createdAt: posts.createdAt,
+    createdBy: posts.createdBy,
+    // Get author information from users table
+    author: {
+      name: user.name,
+      username: user.email,
+      image: user.image,
+    },
+    // Count votes with a subquery
+    votes: sql<number>`COALESCE(
+      (SELECT SUM(${votes.value}) FROM ${votes} WHERE ${votes.postId} = ${posts.id}), 0
+    )`.as("votes"),
+    // Count comments with a subquery
+    commentCount: sql<number>`(
+      SELECT COUNT(*) FROM ${comments} WHERE ${comments.postId} = ${posts.id}
+    )`.as("commentCount"),
+    // Get tags with a subquery
+    tags: sql<string>`(
+      SELECT json_group_array(
+        json_object(
+          'id', ${tags.id}, 
+          'name', ${tags.name}
+        )
+      ) 
+      FROM ${postTags} 
+      JOIN ${tags} ON ${postTags.tagId} = ${tags.id}
+      WHERE ${postTags.postId} = ${posts.id}
+    )`.as("tags"),
+  })
+  .from(posts)
+  .innerJoin(user, eq(posts.createdBy, user.id))
+  .where(eq(posts.id, id!))
+  .limit(1);
+
+if (postData.length === 0) {
+  return Astro.redirect("/404");
+}
+
+const post = {
+  ...postData[0],
+  tags: postData[0].tags
+    ? (JSON.parse(postData[0].tags) as { id: string; name: string }[])
+    : [],
+};
+
+// Get comments for the post
+const commentData = await db
+  .select({
+    id: comments.id,
+    content: comments.content,
+    createdAt: comments.createdAt,
+    createdBy: comments.createdBy,
+    parentCommentId: comments.parentCommentId,
+    // Get author information
+    author: {
+      name: user.name,
+      username: user.email,
+      image: user.image,
+    },
+    // Count votes for the comment
+    votes: sql<number>`COALESCE(
+      (SELECT SUM(${votes.value}) FROM ${votes} WHERE ${votes.commentId} = ${comments.id}), 0
+    )`.as("votes"),
+  })
+  .from(comments)
+  .innerJoin(user, eq(comments.createdBy, user.id))
+  .where(eq(comments.postId, id!))
+  .orderBy(desc(comments.createdAt));
+
+// Process comments to create a threaded structure
+type Comment = (typeof commentData)[0];
+interface CommentWithReplies extends Comment {
+  replies: CommentWithReplies[];
+}
+
+const commentMap = new Map<string, CommentWithReplies>();
+const rootComments: CommentWithReplies[] = [];
+
+// First pass: create comment objects with empty replies array
+commentData.forEach((comment) => {
+  const commentWithReplies = {
+    ...comment,
+    replies: [],
+  };
+  commentMap.set(comment.id, commentWithReplies);
+});
+
+// Second pass: organize into parent-child relationships
+commentData.forEach((comment) => {
+  const commentWithReplies = commentMap.get(comment.id)!;
+  if (comment.parentCommentId) {
+    const parentComment = commentMap.get(comment.parentCommentId);
+    if (parentComment) {
+      parentComment.replies.push(commentWithReplies);
+    } else {
+      rootComments.push(commentWithReplies);
+    }
+  } else {
+    rootComments.push(commentWithReplies);
+  }
+});
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+
+  if (diffSec < 60) return `${diffSec} seconds ago`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} minutes ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
+  return `${Math.floor(diffSec / 86400)} days ago`;
+}
+
+// Format URL for display
+function formatUrl(url: string) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return url;
+  }
+}
+
+// Check if URL is an image
+function isImageUrl(url: string) {
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname.toLowerCase();
+    return (
+      pathname.endsWith(".jpg") ||
+      pathname.endsWith(".jpeg") ||
+      pathname.endsWith(".png") ||
+      pathname.endsWith(".gif") ||
+      pathname.endsWith(".webp")
+    );
+  } catch (e) {
+    return false;
+  }
+}
+---
+
+<Layout title={post.title}>
+  <main class="container mx-auto py-8 px-4">
+    <div class="mb-4">
+      <Button variant="outline" size="sm" className="mb-6">
+        <a href="/forum" class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-left"
+            ><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg
+          >
+          Back to Forum
+        </a>
+      </Button>
+
+      <!-- Post Card -->
+      <Card className="mb-8">
+        <div class="flex">
+          <div class="flex flex-col items-center py-4 px-4 border-r">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 text-lg font-bold"
+            >
+              ▲
+            </Button>
+            <span class="font-bold my-1 text-xl">{post.votes}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 text-lg font-bold"
+            >
+              ▼
+            </Button>
+          </div>
+
+          <div class="flex-1">
+            <CardHeader className="py-4">
+              {
+                post.tags && post.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1 mb-2">
+                    {post.tags.map((tag: { id: string; name: string }) => (
+                      <Badge key={tag.id} variant="outline" className="text-xs">
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  </div>
+                )
+              }
+
+              <h1 class="text-2xl font-bold">{post.title}</h1>
+
+              {
+                post.type === "link" && (
+                  <a
+                    href={post.content}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm text-muted-foreground hover:underline"
+                  >
+                    {formatUrl(post.content)}
+                  </a>
+                )
+              }
+
+              <div
+                class="flex items-center gap-4 text-sm text-muted-foreground"
+              >
+                <div class="flex items-center gap-2">
+                  <ForumAvatar
+                    name={post.author.name}
+                    image={post.author.image}
+                    username={post.author.username}
+                    client:idle
+                  />
+                  <span>{post.author.name}</span>
+                </div>
+                <span>{formatDate(post.createdAt)}</span>
+              </div>
+            </CardHeader>
+
+            <CardContent className="py-4">
+              {
+                post.type === "text" && (
+                  <div class="prose max-w-none">
+                    <p>{post.content}</p>
+                  </div>
+                )
+              }
+
+              {
+                post.type === "image" && (
+                  <div class="rounded-md overflow-hidden">
+                    <img
+                      src={post.content}
+                      alt={post.title}
+                      class="w-full max-h-[600px] object-contain"
+                    />
+                  </div>
+                )
+              }
+
+              {
+                post.type === "link" && isImageUrl(post.content) && (
+                  <div class="rounded-md overflow-hidden">
+                    <img
+                      src={post.content}
+                      alt={post.title}
+                      class="w-full max-h-[600px] object-contain"
+                    />
+                  </div>
+                )
+              }
+            </CardContent>
+
+            <CardFooter className="py-4 flex justify-between border-t">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-message-square"
+                  >
+                    <path
+                      d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                    ></path>
+                  </svg>
+                  <span>{post.commentCount} comments</span>
+                </span>
+                <Button variant="ghost" size="sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-share-2 mr-2"
+                  >
+                    <circle cx="18" cy="5" r="3"></circle><circle
+                      cx="6"
+                      cy="12"
+                      r="3"></circle><circle cx="18" cy="19" r="3"
+                    ></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"
+                    ></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"
+                    ></line>
+                  </svg>
+                  Share
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-bookmark mr-2"
+                  >
+                    <path
+                      d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"
+                    ></path>
+                  </svg>
+                  Save
+                </Button>
+              </div>
+            </CardFooter>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Add Comment Form -->
+      <Card className="mb-8">
+        <CardHeader>
+          <h2 class="text-lg font-bold">Add a comment</h2>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <Textarea
+              placeholder="What are your thoughts?"
+              className="min-h-24 mb-4"
+              name="content"
+              required
+            />
+            <Button type="submit">Comment</Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <!-- Comments Section -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-bold mb-4">Comments ({post.commentCount})</h2>
+
+        {
+          rootComments.length === 0 ? (
+            <div class="text-center text-muted-foreground py-6">
+              No comments yet. Be the first to comment!
+            </div>
+          ) : (
+            <div class="space-y-6">
+              {rootComments.map((comment) => (
+                <div class="comment-thread">
+                  <Card className="mb-2">
+                    <div class="flex">
+                      <div class="flex flex-col items-center py-4 px-2 border-r">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto px-2 text-sm"
+                        >
+                          ▲
+                        </Button>
+                        <span class="font-bold my-1 text-sm">
+                          {comment.votes}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto px-2 text-sm"
+                        >
+                          ▼
+                        </Button>
+                      </div>
+
+                      <div class="flex-1">
+                        <CardHeader className="py-2">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-sm">
+                              <ForumAvatar
+                                name={comment.author.name}
+                                image={comment.author.image}
+                                username={comment.author.username}
+                                client:idle
+                              />
+                              <span class="font-medium">
+                                {comment.author.name}
+                              </span>
+                              <span class="text-muted-foreground">
+                                • {formatDate(comment.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="py-2">
+                          <p>{comment.content}</p>
+                        </CardContent>
+                        <CardFooter className="py-2 text-sm">
+                          <div class="flex gap-4">
+                            <Button variant="ghost" size="sm">
+                              Reply
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              Share
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              Report
+                            </Button>
+                          </div>
+                        </CardFooter>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {comment.replies.length > 0 && (
+                    <div class="pl-8 space-y-2 mt-2">
+                      {comment.replies.map((reply) => (
+                        <Card className="mb-1">
+                          <div class="flex">
+                            <div class="flex flex-col items-center py-4 px-2 border-r">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto px-2 text-xs"
+                              >
+                                ▲
+                              </Button>
+                              <span class="font-bold my-1 text-xs">
+                                {reply.votes}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto px-2 text-xs"
+                              >
+                                ▼
+                              </Button>
+                            </div>
+
+                            <div class="flex-1">
+                              <CardHeader className="py-2">
+                                <div class="flex items-center justify-between">
+                                  <div class="flex items-center gap-2 text-sm">
+                                    <ForumAvatar
+                                      name={reply.author.name}
+                                      image={reply.author.image}
+                                      username={reply.author.username}
+                                      client:idle
+                                    />
+                                    <span class="font-medium">
+                                      {reply.author.name}
+                                    </span>
+                                    <span class="text-muted-foreground">
+                                      • {formatDate(reply.createdAt)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="py-2">
+                                <p>{reply.content}</p>
+                              </CardContent>
+                              <CardFooter className="py-2 text-sm">
+                                <div class="flex gap-4">
+                                  <Button variant="ghost" size="sm">
+                                    Reply
+                                  </Button>
+                                  <Button variant="ghost" size="sm">
+                                    Share
+                                  </Button>
+                                  <Button variant="ghost" size="sm">
+                                    Report
+                                  </Button>
+                                </div>
+                              </CardFooter>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </main>
+</Layout>

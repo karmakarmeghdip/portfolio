@@ -1,6 +1,7 @@
 ---
 import { auth } from "@/lib/auth";
 import { pwaInfo } from "virtual:pwa-info";
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import { MainLayout } from "@/components/layout/MainLayout";
 const page = Astro.url.pathname.split("/")[1] || "home";
@@ -18,19 +19,30 @@ const session = await auth.api.getSession({
 			? "dark"
 			: "light";
 	};
+	// document.addEventListener("astro:page-load", () => {
 	const isDark = getThemePreference() === "dark";
 	document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-
+	console.log("Theme set to", isDark ? "dark" : "light");
 	if (typeof localStorage !== "undefined") {
 		const observer = new MutationObserver(() => {
-			const isDark = document.documentElement.classList.contains("dark");
-			localStorage.setItem("theme", isDark ? "dark" : "light");
+			setTimeout(() => {
+				const isDarkDOM = document.documentElement.classList.contains("dark");
+
+				localStorage.setItem("theme", isDarkDOM ? "dark" : "light");
+				console.log("Theme set to", isDark ? "dark" : "light");
+			}, 1000);
 		});
 		observer.observe(document.documentElement, {
 			attributes: true,
 			attributeFilter: ["class"],
 		});
 	}
+	// });
+	document.addEventListener("astro:after-swap", () => {
+		const isDark = getThemePreference() === "dark";
+		document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+		console.log("Theme set to", isDark ? "dark" : "light");
+	});
 </script>
 
 <html lang="en">
@@ -44,6 +56,7 @@ const session = await auth.api.getSession({
 			content="Meghdip's Personal Website, come discuss Tech with me here"
 		/>
 		<title>Meghdip's Website</title>
+		<ClientRouter />
 		<script src="/src/pwa.ts"></script>
 		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
 	</head>
