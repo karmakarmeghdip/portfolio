@@ -20,6 +20,7 @@ import {
 } from "@/lib/schema/forum-schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { user } from "@/lib/schema/auth-schema";
+import ForumVote from "@/components/forum-vote";
 
 const id = Astro.params.id;
 
@@ -201,21 +202,7 @@ function isImageUrl(url: string) {
       <Card className="mb-8">
         <div class="flex">
           <div class="flex flex-col items-center py-4 px-4 border-r">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-2 text-lg font-bold"
-            >
-              ▲
-            </Button>
-            <span class="font-bold my-1 text-xl">{post.votes}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-2 text-lg font-bold"
-            >
-              ▼
-            </Button>
+            <ForumVote postId={post.id} votes={post.votes} size="xl" />
           </div>
 
           <div class="flex-1">

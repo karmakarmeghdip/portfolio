@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { actions } from "astro:actions";
 
-export default function ForumVote({ postId, votes }: { postId: string, votes: number }) {
+export default function ForumVote({ postId, votes, size = null }: { postId: string, votes: number, size?: "xl" | null }) {
   const [userVote, setUserVote] = useState(0);
   return <><Button
     variant="ghost"
@@ -23,7 +23,7 @@ export default function ForumVote({ postId, votes }: { postId: string, votes: nu
   >
     ▲
   </Button>
-    <span className="font-bold my-1">{votes + userVote}</span>
+    <span className={"font-bold my-1 " + size === "xl" ? "text-xl" : ""}>{votes + userVote}</span>
     <Button
       variant="ghost"
       size="sm"
